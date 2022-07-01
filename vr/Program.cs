@@ -30,7 +30,7 @@ namespace vrToApi
             Vec2 temp = c.stick;
 
             HttpClient client = new HttpClient();
-            string url = "http://127.0.0.1:8000/vrPost";
+            string url = "https://wfevbii2w47dcqjn3tkwyf6evq0pbckw.lambda-url.us-west-2.on.aws/vrPost";
 
             // Initialize a post class with controller data
             var instructions = new Post() {
@@ -87,7 +87,7 @@ namespace vrToApi
 
                 i += 1;
                 // make i larger or smaller depending on how many times you want the API to get posted to per second
-                if (i >= 60){ i = 0;}
+                if (i >= 15){ i = 0;}
             })) ;
             SK.Shutdown();
         }
