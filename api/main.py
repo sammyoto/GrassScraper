@@ -4,8 +4,10 @@
 import json
 from fastapi import FastAPI
 from pydantic import BaseModel
+from mangum import Mangum
 
 app = FastAPI()
+handler = Mangum(app)
 
 class Instruction(BaseModel):
     handy: str
@@ -17,6 +19,7 @@ class Instruction(BaseModel):
 
 #TODO create POST method to add to instruction queue and GET method to take from queue and reset it
 instructionQueue = []
+
 
 @app.get("/piGet")
 async def root():
