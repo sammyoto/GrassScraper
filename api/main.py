@@ -27,7 +27,7 @@ async def root():
         item = instructionQueue.pop()
         return json.dumps(item.__dict__)
     else:
-        return {"message: No item in queue!"}
+        return "{\"message\": \"No item in queue!\"}"
 
 @app.post("/vrPost")
 async def vrPost(instruction: Instruction):
