@@ -81,7 +81,8 @@ namespace vrToApi
                     sendControls(Handed.Left);
                     sendControls(Handed.Right);
                 }
-                
+
+                Renderer.SkyTex = Tex.FromCubemapEquirectangular("noah.jpg", out SphericalHarmonics lighting);
                 UI.Handle("Cube", ref cubePose, cube.Bounds);
                 cube.Draw(cubePose.ToMatrix());
 
