@@ -3,6 +3,9 @@ using System;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace vrToApi
 {
@@ -18,13 +21,23 @@ namespace vrToApi
             public string x2 { get; set; }
         }
 
+
+        // method to get images from AWS
+        // Not-working, extremely slow, makes VR lag to the point where you can't control lawn mower
+        // In need of faster streaming methods than downloading and cubemapping in real time on the machine
+        static byte[] getImage()
+        {
+            string imgURL = "https://9f3low7kki.execute-api.us-west-2.amazonaws.com/v2/holewherejpglives-1?file=test20220707T091229.00006.jpg";
+            HttpClient imgClient = new HttpClient();
+            var data = imgClient.GetStringAsync(imgURL);
+            var temp = Convert.FromBase64String(data.Result);
+            return temp;
+        }
+
         // method to send contoller data to API
-        static void sendControls(Handed hand)
+        static void sendControls(Handed hand, Controller c)
         {
             // Initialize temp variables
-
-            // The controller specific to the hand it is in
-            Controller c = Input.Controller(hand);
 
             // The analog stick on the controller
             Vec2 temp = c.stick;
@@ -50,7 +63,6 @@ namespace vrToApi
             client.PostAsync(url, sentData);
         }
 
-
         static void Main(string[] args)
         {
             // Initialize StereoKit
@@ -61,34 +73,33 @@ namespace vrToApi
             };
             if (!SK.Initialize(settings))
                 Environment.Exit(1);
+            
 
-
-            // Create assets used by the app
-            Pose cubePose = new Pose(0, 0, -0.5f, Quat.Identity);
-            Model cube = Model.FromMesh(
-                Mesh.GenerateRoundedCube(Vec3.One * 0.1f, 0.02f),
-                Default.MaterialUI);  
-    
             // Core application loop
 
             int i = 0;
             while (SK.Step(() =>
             {
+                // Define Controllers
+                Controller leftController = Input.Controller(Handed.Left);
+                Controller rightController = Input.Controller(Handed.Right);
+
+                // Change camera position according to right stick
+                Quat rotation = Renderer.CameraRoot.Pose.orientation;
+                Matrix temp = Matrix.R(rightController.stick.y * 2, rightController.stick.x * 2, 0);
+                Renderer.CameraRoot *= temp;
 
                 //only send instructions certain ammount of times per second
                 if (i == 0)
                 {
-                    sendControls(Handed.Left);
-                    sendControls(Handed.Right);
+                    sendControls(Handed.Left, leftController);
                 }
-
+                
                 Renderer.SkyTex = Tex.FromCubemapEquirectangular("noah.jpg", out SphericalHarmonics lighting);
-                UI.Handle("Cube", ref cubePose, cube.Bounds);
-                cube.Draw(cubePose.ToMatrix());
 
                 i += 1;
                 // make i larger or smaller depending on how many times you want the API to get posted to per second
-                if (i >= 15){ i = 0;}
+                if (i >= 14){ i = 0;}
             })) ;
             SK.Shutdown();
         }
