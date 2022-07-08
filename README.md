@@ -7,14 +7,4 @@ Company Culture Expectations
 3. Pull to main
 4. Succeed!
 
-Sexual Harassment Policy
-1. No sniffing
-2. Have a positive attitude
-3. If you do it to me, I can do it to you
 
-
-Gmail:  grassscraper@gmail.com
-Gmail Password: grassscraper123
-
-AWS email:  grassscraper@gmail.com
-AWS password: Grassscraper_123
